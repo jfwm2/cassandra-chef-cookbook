@@ -102,7 +102,7 @@
    -->
 
   <root level="INFO">
-    <appender-ref ref="FILE" />
+    <appender-ref ref="SYSTEMLOG" />
     <% if node.cassandra.logback.debug.enable -%>
     <appender-ref ref="ASYNCDEBUGLOG" />
     <% end -%>
