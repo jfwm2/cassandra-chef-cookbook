@@ -15,6 +15,7 @@ StandardOutput=journal
 StandardError=inherit
 Environment="CASSANDRA_HOME=<%= node.cassandra.installation_dir %>" "CASSANDRA_CONF=<%= node.cassandra.conf_dir %>"
 LimitNOFILE=infinity
+TimeoutStopSec=10min
 PIDFile=<%= node.cassandra.pid_dir %>/cassandra.pid
 ExecStop=<%= node.cassandra.installation_dir %>/bin/nodetool  disablegossip
 ExecStop=<%= node.cassandra.installation_dir %>/bin/nodetool  disablethrift
