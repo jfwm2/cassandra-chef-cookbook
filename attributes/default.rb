@@ -14,6 +14,7 @@ default['cassandra']['service_name'] = 'cassandra'
 default['cassandra']['user'] = 'cassandra'
 default['cassandra']['group'] = 'cassandra'
 default['cassandra']['setup_user'] = true
+default['cassandra']['setup_user_limits'] = true
 default['cassandra']['user_home'] = nil
 default['cassandra']['system_user'] = true
 default['cassandra']['version'] = '2.2.0'
@@ -148,6 +149,14 @@ default['cassandra']['opscenter']['server']['package_name'] = 'opscenter'
 default['cassandra']['opscenter']['server']['port'] = '8888'
 default['cassandra']['opscenter']['server']['interface'] = '0.0.0.0'
 default['cassandra']['opscenter']['server']['authentication'] = false
+
+default['cassandra']['opscenter']['cassandra_metrics']['ignored_keyspaces'] = %w(system OpsCenter)
+default['cassandra']['opscenter']['cassandra_metrics']['ignored_column_families'] = []
+default['cassandra']['opscenter']['cassandra_metrics']['1min_ttl'] = 604800
+default['cassandra']['opscenter']['cassandra_metrics']['5min_ttl'] = 2419200
+default['cassandra']['opscenter']['cassandra_metrics']['2hr_ttl'] = 31536000
+
+default['cassandra']['opscenter']['custom_configuration'] = {}
 
 default['cassandra']['opscenter']['agent']['package_name'] = 'datastax-agent'
 default['cassandra']['opscenter']['agent']['download_url'] = nil

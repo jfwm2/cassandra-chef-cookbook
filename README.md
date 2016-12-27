@@ -130,6 +130,7 @@ some recently added attributes. Please refer to the [attributes files](https://g
  * `node[:cassandra][:tarball][:url]` and `node[:cassandra][:tarball][:sha256sum]` specify tarball URL and SHA256 check sum used by the `cassandra::tarball` recipe.
   * Setting `node[:cassandra][:tarball][:url]` to "auto" (default) will download the tarball of the specified version from the Apache repository.
  * `node[:cassandra][:setup_user]` (default: true): create user/group for Cassandra node process
+ * `node[:cassandra][:setup_user_limits]` (default: true): setup Cassandra user limits
  * `node[:cassandra][:user]`: username Cassandra node process will use
  * `node[:cassandra][:group]`: groupname Cassandra node process will use
  * `node[:cassandra][:heap_new_size]` set JVM `-Xmn`; if nil, defaults to `min(100MB * num_cores, 1/4 * heap size)`
@@ -373,8 +374,26 @@ Oracle JVM 8 tuning parameters: [here](https://docs.oracle.com/javase/8/docs/tec
  * `node[:cassandra][:opscenter][:server][:port]` (default: 8888)
  * `node[:cassandra][:opscenter][:server][:interface]` (default: 0.0.0.0)
  * `node[:cassandra][:opscenter][:server][:authentication]` (default: false)
+ * `node[:cassandra][:opscenter][:cassandra_metrics][:ignored_keyspaces]` (default: [system, OpsCenter])
+ * `node[:cassandra][:opscenter][:cassandra_metrics][:ignored_column_families]` (default: [])
+ * `node[:cassandra][:opscenter][:cassandra_metrics][:1min_ttl]` (default: 604800)
+ * `node[:cassandra][:opscenter][:cassandra_metrics][:5min_ttl]` (default: 2419200)
+ * `node[:cassandra][:opscenter][:cassandra_metrics][:2hr_ttl]` (default: 31536000)
+ * `node[:cassandra][:opscenter][:custom_configuration]` (default: {}) a hash of custom configuration sections to add to [opscenterd.conf](https://docs.datastax.com/en/opscenter/6.0/opsc/configure/opscConfigProps_r.html), e.g.:
+
+ ```
+{
+  'ui' => {
+    'default_api_timeout' => 300
+  },
+  'stat_reporter' => {
+    'interval' => 1
+  }
+}
+ ```
 
 #### DataStax Ops Center Agent Tarball attributes
+
  * `node[:cassandra][:opscenter][:agent][:download_url]` (default: "") Required. You need to specify
  agent download url, because that could be different for each opscenter server version. ( S3 is a great
  place to store packages )
