@@ -67,6 +67,19 @@ remote_file tmp do
   not_if { ::File.exist?(node['cassandra']['source_dir']) }
 end
 
+# Ensure that node['cassandra']['source_dir'] node['cassandra']['installation_dir'] and minus leaf directory exists
+[
+  node['cassandra']['source_dir'].split('/')[0..-2].join('/'),
+  node['cassandra']['installation_dir'].split('/')[0..-2].join('/')
+].each do |dir|
+  directory dir do
+    owner node['cassandra']['user']
+    group node['cassandra']['group']
+    recursive true
+    mode 0755
+  end
+end
+
 # extract archive to node['cassandra']['source_dir'] and update one time ownership permissions
 bash 'extract_cassandra_source' do
   user 'root'
@@ -100,9 +113,8 @@ directories = [node['cassandra']['log_dir'],
                node['cassandra']['commitlog_dir'],
                node['cassandra']['saved_caches_dir']
               ]
-if node['cassandra']['heap_dump_dir'] then
-  directories << node['cassandra']['heap_dump_dir']
-end
+
+directories << node['cassandra']['heap_dump_dir'] if node['cassandra']['heap_dump_dir']
 directories += node['cassandra']['data_dir'] # this is an array now
 directories.each do |dir|
   directory dir do
@@ -141,11 +153,13 @@ end
 # setup ulimits
 #
 # Perhaps we can move it to recipe `config`
-user_ulimit node['cassandra']['user'] do
-  filehandle_limit node['cassandra']['limits']['nofile']
-  process_limit node['cassandra']['limits']['nproc']
-  memory_limit node['cassandra']['limits']['memlock']
-  notifies :restart, 'service[cassandra]', :delayed if node['cassandra']['notify_restart']
+if node['cassandra']['setup_user_limits'] # ~FC023 (simple guard doesn't seem to have any effect)
+  user_ulimit node['cassandra']['user'] do
+    filehandle_limit node['cassandra']['limits']['nofile']
+    process_limit node['cassandra']['limits']['nproc']
+    memory_limit node['cassandra']['limits']['memlock']
+    notifies :restart, 'service[cassandra]', :delayed if node['cassandra']['notify_restart']
+  end
 end
 
 pam_limits = 'session    required   pam_limits.so'
@@ -159,16 +173,16 @@ ruby_block 'require_pam_limits.so' do
 end
 
 if node['cassandra']['use_systemd'] == false
-    # sysv service file
-    template "/etc/init.d/#{node['cassandra']['service_name']}" do
-      source "#{node['platform_family']}.cassandra.init.erb"
-      owner 'root'
-      group 'root'
-      mode 0755
-      notifies :restart, 'service[cassandra]', :delayed if node['cassandra']['notify_restart']
-    end
+  # sysv service file
+  template "/etc/init.d/#{node['cassandra']['service_name']}" do
+    source "#{node['platform_family']}.cassandra.init.erb"
+    owner 'root'
+    group 'root'
+    mode 0755
+    notifies :restart, 'service[cassandra]', :delayed if node['cassandra']['notify_restart']
+  end
 else
-    include_recipe 'cassandra-dse::systemd'
+  include_recipe 'cassandra-dse::systemd'
 end
 
 # 15. Cleanup
