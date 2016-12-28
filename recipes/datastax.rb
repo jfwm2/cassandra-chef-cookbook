@@ -59,6 +59,8 @@ node.default['cassandra']['saved_caches_dir'] = ::File.join(node['cassandra']['r
 include_recipe 'cassandra-dse::user'
 include_recipe 'cassandra-dse::repositories'
 
+
+
 # setup repository and install datastax C* packages
 case node['platform_family']
 when 'debian'
@@ -135,14 +137,15 @@ when 'debian'
 when 'rhel'
   node.default['cassandra']['conf_dir'] = '/etc/cassandra/conf'
 
+  if node['cassandra']['use_systemd'] == true
+    include_recipe 'cassandra-dse::systemd'
+  end
+
   yum_package node['cassandra']['package_name'] do
     if node['cassandra']['release'].to_s != ""
       version "#{node['cassandra']['version']}-#{node['cassandra']['release']}"
     else
       version node['cassandra']['version']
-    end
-    if node['cassandra']['use_systemd'] == true
-      include_recipe 'cassandra-dse::systemd'
     end
     allow_downgrade
     notifies :run, 'ruby_block[set_jvm_search_dirs_on_java_8]', :immediately
