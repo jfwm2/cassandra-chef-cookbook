@@ -141,14 +141,14 @@ when 'rhel'
     else
       version node['cassandra']['version']
     end
+    if node['cassandra']['use_systemd'] == true
+      include_recipe 'cassandra-dse::systemd'
+    end
     allow_downgrade
     notifies :run, 'ruby_block[set_jvm_search_dirs_on_java_8]', :immediately
     options node['cassandra']['yum']['options']
   end
 
-  if node['cassandra']['use_systemd'] == true
-    include_recipe 'cassandra-dse::systemd'
-  end
 
   # applying fix for java search directories, on java 8 it needs to be update
   # including the new directories
