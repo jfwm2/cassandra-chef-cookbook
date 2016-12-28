@@ -30,6 +30,9 @@ node.default['cassandra']['bin_dir']   = ::File.join(node['cassandra']['installa
 node.default['cassandra']['lib_dir']   = ::File.join(node['cassandra']['installation_dir'], 'lib')
 node.default['cassandra']['conf_dir']  = ::File.join(node['cassandra']['installation_dir'], 'conf')
 
+# Directory containing the daemon startup binary (used by systemd startup script's template)
+node.default['cassandra']['sbin_dir']  = ::File.join(node['cassandra']['installation_dir'], 'bin')
+
 # commit log, data directory, saved caches and so on are all stored under the data root. MK.
 # node['cassandra']['root_dir'] sub dirs
 node.default['cassandra']['data_dir'] = [::File.join(node['cassandra']['root_dir'], 'data')]

@@ -34,6 +34,7 @@ end
 node.default['cassandra']['installation_dir'] = '/usr/share/cassandra'
 # node['cassandra']['installation_dir subdirs
 node.default['cassandra']['bin_dir'] = '/usr/bin' # package default folder for tools
+node.default['cassandra']['sbin_dir'] = '/usr/sbin' # package default for daemon startup binary
 node.default['cassandra']['lib_dir'] = ::File.join(node['cassandra']['installation_dir'], 'lib')
 
 # commit log, data directory, saved caches and so on are all stored under the data root. MK.

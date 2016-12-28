@@ -7,7 +7,7 @@ After=network-online.target
 WantedBy=multi-user.target
 
 [Service]
-ExecStart=<%= node.cassandra.installation_dir %>/bin/cassandra -f -p <%= node.cassandra.pid_dir %>/cassandra.pid
+ExecStart=<%= node.cassandra.sbin_dir %>/cassandra -f -p <%= node.cassandra.pid_dir %>/cassandra.pid
 Type=simple
 User=<%= node.cassandra.user %>
 Group=<%= node.cassandra.group %>
