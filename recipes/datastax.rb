@@ -146,11 +146,21 @@ when 'rhel'
     options node['cassandra']['yum']['options']
   end
 
+  if node['cassandra']['use_systemd'] == true
+    include_recipe 'cassandra-dse::systemd'
+  end
+
   # applying fix for java search directories, on java 8 it needs to be update
   # including the new directories
   ruby_block 'set_jvm_search_dirs_on_java_8' do
     block do
-      init_path = ::File.join('/etc/init.d/', node['cassandra']['service_name'])
+      if node['cassandra']['use_systemd'] == false
+        # sysv
+        init_path = ::File.join('/etc/init.d/', node['cassandra']['service_name'])
+      else
+        # systemd
+        init_path = ::File.join('/etc/systemd/system/', node['cassandra']['service_name'] + '.service')
+      end
       f = Chef::Util::FileEdit.new(init_path)
       f.search_file_replace_line(
         /^JVM_SEARCH_DIRS=.*$/,
