@@ -152,6 +152,11 @@ when 'rhel'
     options node['cassandra']['yum']['options']
   end
 
+  if node['cassandra']['use_systemd'] == true
+    file '/etc/init.d/' + node['cassandra']['service_name'] do
+      action :delete
+    end
+  end
 
   # applying fix for java search directories, on java 8 it needs to be update
   # including the new directories
