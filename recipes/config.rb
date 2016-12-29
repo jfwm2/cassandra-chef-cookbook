@@ -199,12 +199,12 @@ end
 # set up jamm
 remote_file "/usr/share/java/#{node['cassandra']['jamm']['jar_name']}" do
   source "#{node['cassandra']['jamm']['base_url']}/#{node['cassandra']['jamm']['jar_name']}"
-  mode '0644'
   if node['cassandra']['use_systemd'] == true && node['cassandra']['install_method'] == 'datastax'
     # if we use sysv or we have a working tarball-installed service
     # we do not change these permissions to avoid service restart
     # this workaround should be removed after the decommissioning centos 6 nodes
     # and after considering a planned restart of tarball-installed services
+    mode '0644'
     owner node['cassandra']['user']
     group node['cassandra']['group']
   end
