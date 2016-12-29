@@ -139,6 +139,7 @@ when 'rhel'
   node.default['cassandra']['conf_dir'] = '/etc/cassandra/conf'
 
   if node['cassandra']['use_systemd'] == true
+    node.default['cassandra']['startup_program'] = ::File.join(node['cassandra']['sbin_dir'], 'cassandra')
     include_recipe 'cassandra-dse::systemd'
   end
 
