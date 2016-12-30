@@ -200,8 +200,12 @@ end
 remote_file "/usr/share/java/#{node['cassandra']['jamm']['jar_name']}" do
   source "#{node['cassandra']['jamm']['base_url']}/#{node['cassandra']['jamm']['jar_name']}"
   mode '0644'
-  owner node['cassandra']['user']
-  group node['cassandra']['group']
+  if node['cassandra']['install_method'] == 'datastax'
+    # if we have a working tarball-installed service we do not change these permissions to avoid service restart
+    # this workaround should be removed after considering a planned restart of tarball-installed services
+    owner node['cassandra']['user']
+    group node['cassandra']['group']
+  end
   checksum node['cassandra']['jamm']['sha256sum']
   only_if { node['cassandra']['setup_jamm'] }
 end
@@ -246,8 +250,12 @@ end
 
 link "#{node['cassandra']['lib_dir']}/jna.jar" do
   to '/usr/share/java/jna.jar'
-  owner node['cassandra']['user']
-  group node['cassandra']['group']
+  if node['cassandra']['install_method'] == 'datastax'
+    # if we have a working tarball-installed service we do not change these permissions to avoid service restart
+    # this workaround should be removed after considering a planned restart of tarball-installed services
+    owner node['cassandra']['user']
+    group node['cassandra']['group']
+  end
   notifies :restart, 'service[cassandra]', :delayed if node['cassandra']['notify_restart']
   only_if { node['cassandra']['setup_jna'] }
 end
